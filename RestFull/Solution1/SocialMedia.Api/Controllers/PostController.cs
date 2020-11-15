@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SocialMedia.Core.Interfaces;
 using SocialMedia.Infraestructure.Repositories;
 
 namespace SocialMedia.Api.Controllers
@@ -12,12 +13,24 @@ namespace SocialMedia.Api.Controllers
     [ApiController]
     public class PostController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult GetPosts()
+        private readonly IPostsRepository _postsRepository;
+        public PostController(IPostsRepository postsRepository)
         {
-            var post = new PostRepository().GetPosts();
+            _postsRepository = postsRepository;
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetPosts()
+        {
+            var post = await _postsRepository.GetPosts();
 
-            return Ok(null);
+            return Ok(post);
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPost(int id)
+        {
+            var post = await _postsRepository.GetPost(id);
+
+            return Ok(post);
         }
     }
 }
